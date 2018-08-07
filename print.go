@@ -86,6 +86,8 @@ func (q aurQuery) printSearch(start int) {
 
 		if res.OutOfDate != 0 {
 			toprint += bold(red("(Out-of-date "+formatTime(res.OutOfDate)+")")) + " "
+		} else {
+			toprint += bold("("+formatTime(res.LastModified)+") ")
 		}
 
 		if pkg, err := localDb.PkgByName(res.Name); err == nil {
@@ -123,6 +125,8 @@ func (s repoQuery) printSearch() {
 		if len(res.Groups().Slice()) != 0 {
 			toprint += fmt.Sprint(res.Groups().Slice(), " ")
 		}
+
+		toprint += bold("("+formatTime(int(res.BuildDate().Unix()))+") ")
 
 		localDb, err := alpmHandle.LocalDb()
 		if err == nil {
