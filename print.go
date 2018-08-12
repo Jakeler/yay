@@ -188,7 +188,9 @@ func (u upSlice) print() {
 
 		fmt.Printf(namePadding, i.StylizedNameWithRepository())
 
-		fmt.Printf("%s -> %s\n", fmt.Sprintf(versionPadding, left), right)
+		fmt.Printf("%s -> %s  ", fmt.Sprintf(versionPadding, left), fmt.Sprintf(versionPadding, right))
+
+		fmt.Printf("(%s)\n", formatTime(i.Date))
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"time"
 
 	alpm "github.com/jguer/go-alpm"
 	rpc "github.com/mikkeloscar/aur"
@@ -17,6 +18,7 @@ type upgrade struct {
 	Repository    string
 	LocalVersion  string
 	RemoteVersion string
+	Date          int
 }
 
 // upSlice is a slice of Upgrades
@@ -232,7 +234,7 @@ func upDevel(remote []alpm.Package, aurdata map[string]*rpc.Pkg) (toUpgrade upSl
 		if pkg.ShouldIgnore() {
 			printIgnoringPackage(pkg, "latest-commit")
 		} else {
-			toUpgrade = append(toUpgrade, upgrade{pkg.Name(), "devel", pkg.Version(), "latest-commit"})
+			toUpgrade = append(toUpgrade, upgrade{pkg.Name(), "devel", pkg.Version(), "latest-commit", int(time.Now().Unix())})
 		}
 	}
 
@@ -256,7 +258,7 @@ func upAUR(remote []alpm.Package, aurdata map[string]*rpc.Pkg) (upSlice, error) 
 			if pkg.ShouldIgnore() {
 				printIgnoringPackage(pkg, aurPkg.Version)
 			} else {
-				toUpgrade = append(toUpgrade, upgrade{aurPkg.Name, "aur", pkg.Version(), aurPkg.Version})
+				toUpgrade = append(toUpgrade, upgrade{aurPkg.Name, "aur", pkg.Version(), aurPkg.Version, aurPkg.LastModified})
 			}
 		}
 	}
@@ -325,6 +327,7 @@ func upRepo(local []alpm.Package) (upSlice, error) {
 			pkg.DB().Name(),
 			localVer,
 			pkg.Version(),
+			int(pkg.BuildDate().Unix()),
 		})
 		return nil
 	})
